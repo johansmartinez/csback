@@ -75,4 +75,25 @@ async function isInstructor(req,res, callback){
     }
 }
 
-export {sign,isUser,isStudent,isInstructor};
+async function isAdmin(req,res, callback){
+    const dec=await decode(req.headers['token-clubsue'])
+    if (dec) {
+        const {user}=dec;
+        mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento=${user?.documento}`,
+            (err, rows, fields) => {
+                if (err) {res.status(500).send('Ha ocurrido al validar el token')}
+                else{
+                    if(rows[0]?.rol==='admin'){
+                        callback();
+                    }else{
+                        res.status(401).send('Usted no está autorizado para realizar está petición');
+                    }
+                }
+            }
+        );
+    } else {
+        res.status(401).send('Usted no está autorizado para realizar está petición');
+    }
+}
+
+export {sign,isUser,isStudent,isInstructor, isAdmin};

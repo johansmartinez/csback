@@ -50,6 +50,36 @@ export const createInstructor=(req,res)=>{
     );
 };
 
+export const edit=(req,res)=>{
+    const {documento,eps,nombres,apellidos,telefono,fecha_nacimiento,correo,contrasena}=req.body;
+    mysqlConnection.query(`UPDATE PERSONA SET documento='${documento}',eps=${eps},nombres='${String(nombres).toUpperCase()}',apellidos='${String(apellidos).toUpperCase()}',telefono='${telefono}',fecha_nacimiento='${fecha_nacimiento}' WHERE documento='${documento}'`,
+        async (err, rows, fields) => {
+            if(err) {res.status(500).send('Error al editar: Persona')}
+            else{
+                if (contrasena) {
+                    mysqlConnection.query(`UPDATE USUARIOS SET correo='${correo}',contrasena='${await encrypt(contrasena)}' WHERE documento='${documento}'`,
+                        (err,rows,fields)=>{
+                            if (err) {res.status(500).send('Error al editar: USUARIO')}
+                            else{
+                                res.status(200).send('Pesona editado correctamente')
+                            }
+                        }
+                    );
+                } else {
+                    mysqlConnection.query(`UPDATE USUARIOS SET correo='${correo}' WHERE documento='${documento}'`,
+                        (err,rows,fields)=>{
+                            if (err) {res.status(500).send('Error al editar: USUARIO')}
+                            else{
+                                res.status(200).send('Pesona editado correctamente')
+                            }
+                        }
+                    );
+                }
+            }
+        }
+    );
+};
+
 export const login=(req,res)=>{
     const {documento,contrasena}=req.body;
     mysqlConnection.query(`SELECT * FROM DATOS_PERSONA where documento='${documento}'`,
