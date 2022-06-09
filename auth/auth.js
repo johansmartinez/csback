@@ -9,23 +9,70 @@ function sign(user){
 }
 
 function decode(token){
-    return jwt.verify(token, auth);
+    return jwt.decode(token, auth);
 }
 
-
-async function isStudent(req,res){
-    let {user}=await decode(req.headers['token-clubsue'])
-    mysqlConnection.query(`SELECT * FROM PERSONAS WHERE documento=${user.documento}`,
-        (err, rows, fields) => {
-            if (err) res.status(500).send('Ha ocurrido al validar el token');
-            else{
-                if(rows[0].documento){
-                    if (rows[0].rol==='estudiante') {
-                        
+async function isUser(req,res, callback){
+    const dec=await decode(req.headers['token-clubsue'])
+    if (dec) {
+        const {user}=dec;
+        mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento=${user?.documento}`,
+            (err, rows, fields) => {
+                if (err) {res.status(500).send('Ha ocurrido al validar el token')}
+                else{
+                    if(rows[0]?.documento){
+                        callback();
+                    }else{
+                        res.status(401).send('Usted no está autorizado para realizar está petición');
                     }
                 }
             }
-        }
-    );
+        );
+    } else {
+        res.status(401).send('Usted no está autorizado para realizar está petición');
+    }
 }
-export {sign};
+
+async function isStudent(req,res, callback){
+    const dec=await decode(req.headers['token-clubsue'])
+    if (dec) {
+        const {user}=dec;
+        mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento=${user?.documento}`,
+            (err, rows, fields) => {
+                if (err) {res.status(500).send('Ha ocurrido al validar el token')}
+                else{
+                    if(rows[0]?.rol==='estudiante'){
+                        callback();
+                    }else{
+                        res.status(401).send('Usted no está autorizado para realizar está petición');
+                    }
+                }
+            }
+        );
+    } else {
+        res.status(401).send('Usted no está autorizado para realizar está petición');
+    }
+}
+
+async function isInstructor(req,res, callback){
+    const dec=await decode(req.headers['token-clubsue'])
+    if (dec) {
+        const {user}=dec;
+        mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento=${user?.documento}`,
+            (err, rows, fields) => {
+                if (err) {res.status(500).send('Ha ocurrido al validar el token')}
+                else{
+                    if(rows[0]?.rol==='instructor'){
+                        callback();
+                    }else{
+                        res.status(401).send('Usted no está autorizado para realizar está petición');
+                    }
+                }
+            }
+        );
+    } else {
+        res.status(401).send('Usted no está autorizado para realizar está petición');
+    }
+}
+
+export {sign,isUser,isStudent,isInstructor};

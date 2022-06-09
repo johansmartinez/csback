@@ -1,5 +1,6 @@
 import {mysqlConnection} from '../db/connection';
 import {encrypt,compare} from '../crypt/crypt';
+import { sign } from '../auth/auth';
 
 export const getPerson=(req,res)=>{
     const {documento}=req.params
@@ -55,6 +56,8 @@ export const login=(req,res)=>{
         async (err,rows,fields)=>{
             if (rows[0]?.documento) {
                 if (await compare(contrasena,rows[0].contrasena)) {
+                    const token=sign(rows[0])
+                    rows[0].token=token;
                     res.json(rows[0]);
                 } else {
                     res.status(400).send('La constraseña es incorrecta');
