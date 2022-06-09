@@ -13,7 +13,7 @@ export const createEPS=(req,res)=>{
     const {nombre}=req.body;
     mysqlConnection.query(`INSERT INTO EPS (nombre) VALUES ('${String(nombre).toUpperCase()}')`,
         (err, rows, fields) => {
-            if(err) res.status(500).send('Ha ocurrido un error al consultar:EPS')
+            if(err) res.status(500).send('Ha ocurrido un error al registrar:EPS')
             else res.json(rows.insertId);
         }
     );
