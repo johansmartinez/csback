@@ -1,12 +1,12 @@
 import {mysqlConnection} from '../db/connection';
 import {encrypt,compare} from '../crypt/crypt';
-import { sign } from '../auth/auth';
+import { sign, decode } from '../auth/auth';
 
 export const getPerson=(req,res)=>{
     const {documento}=req.params
     mysqlConnection.query(`SELECT * FROM DATOS_PERSONA where documento='${documento}'`,
         (err, rows, fields) => {
-            if(err) res.status(500).send('Ha ocurrido un error al consultar:EPS')
+            if(err) res.status(500).send('Ha ocurrido un error al consultar:Persona')
             else res.json(rows[0]);
         }
     );
@@ -22,7 +22,12 @@ export const createStudent=(req,res)=>{
                     (err,rows,fields)=>{
                         if (err) {res.status(500).send('Error al registrar: USUARIO')}
                         else{
-                            res.status(200).send('Estudiante agregado correctamente')
+                            mysqlConnection.query(`SELECT * FROM DATOS_PERSONA where documento='${documento}'`,
+                                (err, rows, fields) => {
+                                    if(err) res.status(500).send('Ha ocurrido un error al consultar:Persona')
+                                    else res.json(rows[0]);
+                                }
+                            );
                         }
                     }
                 );
@@ -52,7 +57,7 @@ export const createInstructor=(req,res)=>{
 
 export const edit=(req,res)=>{
     const {documento,eps,nombres,apellidos,telefono,fecha_nacimiento,correo,contrasena}=req.body;
-    mysqlConnection.query(`UPDATE PERSONA SET documento='${documento}',eps=${eps},nombres='${String(nombres).toUpperCase()}',apellidos='${String(apellidos).toUpperCase()}',telefono='${telefono}',fecha_nacimiento='${fecha_nacimiento}' WHERE documento='${documento}'`,
+    mysqlConnection.query(`UPDATE PERSONA SET eps=${eps},nombres='${String(nombres).toUpperCase()}',apellidos='${String(apellidos).toUpperCase()}',telefono='${telefono}',fecha_nacimiento='${fecha_nacimiento}' WHERE documento='${documento}'`,
         async (err, rows, fields) => {
             if(err) {res.status(500).send('Error al editar: Persona')}
             else{
@@ -61,7 +66,7 @@ export const edit=(req,res)=>{
                         (err,rows,fields)=>{
                             if (err) {res.status(500).send('Error al editar: USUARIO')}
                             else{
-                                res.status(200).send('Pesona editado correctamente')
+                                res.status(200).send('Persona editado correctamente')
                             }
                         }
                     );
@@ -70,7 +75,7 @@ export const edit=(req,res)=>{
                         (err,rows,fields)=>{
                             if (err) {res.status(500).send('Error al editar: USUARIO')}
                             else{
-                                res.status(200).send('Pesona editado correctamente')
+                                res.status(200).send('Persona editado correctamente')
                             }
                         }
                     );

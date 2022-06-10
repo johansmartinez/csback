@@ -8,12 +8,16 @@ function sign(user){
     }, auth, { expiresIn: '24h' });
 }
 
-function decode(token){
-    return jwt.decode(token, auth);
+function verify(token){
+    return jwt.verify(token, auth);
+}
+
+function decode(token) {
+    return jwt.decode(token,auth);
 }
 
 async function isUser(req,res, callback){
-    const dec=await decode(req.headers['token-clubsue'])
+    const dec=await verify(req.headers['token-clubsue']);
     if (dec) {
         const {user}=dec;
         mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento=${user?.documento}`,
@@ -34,7 +38,7 @@ async function isUser(req,res, callback){
 }
 
 async function isStudent(req,res, callback){
-    const dec=await decode(req.headers['token-clubsue'])
+    const dec=await verify(req.headers['token-clubsue'])
     if (dec) {
         const {user}=dec;
         mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento=${user?.documento}`,
@@ -55,7 +59,7 @@ async function isStudent(req,res, callback){
 }
 
 async function isInstructor(req,res, callback){
-    const dec=await decode(req.headers['token-clubsue'])
+    const dec=await verify(req.headers['token-clubsue'])
     if (dec) {
         const {user}=dec;
         mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento=${user?.documento}`,
@@ -76,7 +80,7 @@ async function isInstructor(req,res, callback){
 }
 
 async function isAdmin(req,res, callback){
-    const dec=await decode(req.headers['token-clubsue'])
+    const dec=await verify(req.headers['token-clubsue'])
     if (dec) {
         const {user}=dec;
         mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento=${user?.documento}`,
@@ -96,4 +100,4 @@ async function isAdmin(req,res, callback){
     }
 }
 
-export {sign,isUser,isStudent,isInstructor, isAdmin};
+export {sign,isUser,isStudent,isInstructor, isAdmin, decode};
