@@ -13,6 +13,9 @@ app.use('/eps',eps);
 import person from './routes/person';
 app.use('/person',person)
 
+import attendance from './routes/attendance';
+app.use('/attendance', attendance);
+
 app.listen(PORT, ()=>{
     console.log(`Server runnig on PORT: ${PORT}`);
 });
