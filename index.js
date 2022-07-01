@@ -22,6 +22,9 @@ app.use('/belt',belt);
 import rank from './routes/rank';
 app.use('/rank',rank);
 
+import report from './routes/report';
+app.use('/report', report);
+
 app.listen(PORT, ()=>{
     console.log(`Server runnig on PORT: ${PORT}`);
 });
