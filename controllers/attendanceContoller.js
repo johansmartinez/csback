@@ -1,4 +1,5 @@
 import {mysqlConnection} from '../db/connection';
+import {nowText} from '../util';
 
 export const getAttendance=(req,res)=>{
     const {alumno}=req.params
@@ -37,8 +38,3 @@ export const registerAttendance=(req,res)=>{
         }
     )
 };
-
-const nowText=()=>{
-    const now=new Date((Date.now()-(86400*1000)));
-    return now.toISOString().split('T')[0];
-}
