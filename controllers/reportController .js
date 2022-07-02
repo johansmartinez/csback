@@ -29,30 +29,40 @@ export const addReport=(req,res)=>{
                 const id_rank=rows[0]?.id;
                 const cinta=rows[0]?.cinta;
                 if (rows[0]?.id) {
-                    mysqlConnection.query(`INSERT INTO INFORME (descripcion,instructor,requisito,rango) VALUES ('${String(descripcion).toUpperCase()}','${instructor}',${requisito},${rows[0]?.id})`,
+                    mysqlConnection.query(`INSERT INTO INFORME (descripcion,instructor,requisito,rango) VALUES ('${descripcion}','${instructor}',${requisito},${rows[0]?.id})`,
                         (err, rows, fields)=>{
                             if (err) {
                                 res.status(500).send('Ha ocurrido un error al agregar: INFORME');
                             } else {
-                                mysqlConnection.query(`SELECT * FROM ASCENSO_RANGO WHERE rango_id=${rows[0]?.id}`,
+                                mysqlConnection.query(`SELECT * FROM ASCENSO_RANGO WHERE rango_id=${id_rank}`,
                                     (err,rows,fields)=>{
                                         if (rows.length>0) {
-                                            res.send({ascenso:false});
+                                            res.send(rows);
                                         } else {
                                             mysqlConnection.query(`UPDATE RANGO SET fecha_ascenso= '${nowText()}' WHERE id=${id_rank}`,
                                                 (err,rows)=>{
                                                     if (err) {
-                                                        res.status(500).send('Ha ocurrido un error al editar: INFORME');
+                                                        res.status(500).send('Ha ocurrido un error al editar: RANGO');
                                                     } else {
                                                         if (cinta<11) {
                                                             mysqlConnection.query(`INSERT INTO RANGO (documento,cinta,fecha_obtencion) VALUES ('${documento}',${(cinta+1)},'${nowText()}')`,
                                                                 (err,rows)=>{
                                                                     if (err) res.status(500).send('Error al ascender')
-                                                                    else res.send({ascenso:true})
+                                                                    else {
+                                                                        mysqlConnection.query(`SELECT * FROM ASCENSO_RANGO WHERE rango_id=${rows.insertId}`,
+                                                                            (err,rows)=>{
+                                                                                if (err) {
+                                                                                    res.status(500).send('Error al consultar: ASCENSO RANGO')
+                                                                                }else{
+                                                                                    res.send(rows);
+                                                                                }
+                                                                            }
+                                                                        );
+                                                                    }
                                                                 }
                                                             );
                                                         } else {
-                                                            res.send({ascenso:false});
+                                                            res.send([]);
                                                         }
                                                     }
                                                 }
@@ -140,7 +150,7 @@ export const performance=(req,res)=>{
                 if (rows.length>0) {
                     const cinta=rows[0].cinta;
                     const rango= rows[0].id;
-                    mysqlConnection.query(`SELECT CI.nombre AS cinta, DR.requisito,DR.componente, (SELECT DR.requisito IN (SELECT requisito_id FROM ASCENSO_RANGO WHERE rango_id=${rango})) AS estado FROM DATOS_REQ DR INNER JOIN CINTA CI ON DR.cinta=CI.id INNER JOIN ASCENSO_RANGO AR ON DR.id=AR.requisito_id WHERE DR.cinta=${cinta} AND AR.rango_id=${rango} `,
+                    mysqlConnection.query(`SELECT CI.nombre AS cinta, DR.requisito, DR.componente, 1 as estado FROM DATOS_REQ DR INNER JOIN INFORME INF ON DR.id=INF.requisito INNER JOIN CINTA CI ON DR.cinta=CI.id WHERE INF.rango=${rango} UNION SELECT CI.nombre AS cinta, DR.requisito,DR.componente, (SELECT DR.requisito IN (SELECT requisito_id FROM ASCENSO_RANGO WHERE rango_id=${rango})) AS estado FROM DATOS_REQ DR INNER JOIN CINTA CI ON DR.cinta=CI.id INNER JOIN ASCENSO_RANGO AR ON DR.id=AR.requisito_id WHERE DR.cinta=${cinta} AND AR.rango_id=${rango} `,
                         (err,rows, fields)=>{
                             if(err) res.status(500).send('Error al consultar: RENDIMIENTO')
                             else res.send(rows);

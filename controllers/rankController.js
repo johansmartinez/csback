@@ -11,7 +11,14 @@ export function getRankStudent(req, res) {
                     mysqlConnection.query(`SELECT * FROM RANGOS_ACTUALES WHERE documento='${documento}'`,
                         (err, rows, fields) => {
                             if(err) res.status(500).send('Ha ocurrido un error al consultar: RANGO')
-                            else res.json(rows[0]);
+                            else {
+                                mysqlConnection.query(`SELECT * FROM ASCENSO_RANGO WHERE rango_id= ${rows[0]?.id||-1}`,
+                                    (err,rows, fields)=>{
+                                        if (err) res.status(500).send('Ha ocurrido un error al consultar los requisitos')
+                                        else res.send(rows)
+                                    }
+                                )
+                            }
                         }
                     );
                 } else {
