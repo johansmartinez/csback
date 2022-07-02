@@ -13,4 +13,8 @@ mysqlConnection.connect(function(err){
     }
 });
 
+setInterval(() => {
+    mysqlConnection.ping();
+}, 5000);
+
 export {mysqlConnection};

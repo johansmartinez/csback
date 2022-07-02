@@ -3,10 +3,18 @@ import {nowText} from '../util';
 
 export const getReports=(req,res)=>{
     const {documento}=req.params;
-    mysqlConnection.query(`SELECT * FROM INFORME WHERE rango IN (SELECT id FROM RANGO WHERE documento='${documento}')`,
+    mysqlConnection.query(`SELECT * FROM RANGOS_ACTUALES WHERE documento='${documento}'`,
         (err, rows, fields) => {
-            if(err) res.status(500).send('Ha ocurrido un error al consultar: INFORMES')
-            else res.json(rows);
+            if (err) {
+                res.status(500).send('Ha ocurrido un error al consultar: INFORMES');
+            } else {
+                mysqlConnection.query(`SELECT INF.id, INF.descripcion, CONCAT(PE.nombres, ' ', PE.apellidos) AS instructor, RC.requisito, CO.nombre as componente FROM INFORME INF INNER JOIN PERSONA PE ON INF.instructor=PE.documento INNER JOIN REQUISITO_CINTA RC ON INF.requisito=RC.id INNER JOIN COMPONENTE CO ON RC.componente=CO.id WHERE INF.rango IN (SELECT id FROM RANGO WHERE documento='${documento}')`,
+                    (err, rows, fields) => {
+                        if(err) res.status(500).send('Ha ocurrido un error al consultar: INFORMES')
+                        else res.json(rows);
+                    }
+                );
+            }
         }
     );
 };
@@ -120,4 +128,28 @@ export const evaluate=async (req,res)=>{
     } else {
         res.status(500).send('No se han encontrado requisitos para Evaluar');
     }
-}
+};
+
+export const performance=(req,res)=>{
+    const {documento}=req.params;
+    mysqlConnection.query(`SELECT * FROM RANGOS_ACTUALES WHERE documento='${documento}'`,
+        (err,rows,fields)=>{
+            if (err) {
+                res.status(500).send('Error al consultar: RANGO ACTUAL');
+            } else {
+                if (rows.length>0) {
+                    const cinta=rows[0].cinta;
+                    const rango= rows[0].id;
+                    mysqlConnection.query(`SELECT CI.nombre AS cinta, DR.requisito,DR.componente, (SELECT DR.requisito IN (SELECT requisito_id FROM ASCENSO_RANGO WHERE rango_id=${rango})) AS estado FROM DATOS_REQ DR INNER JOIN CINTA CI ON DR.cinta=CI.id INNER JOIN ASCENSO_RANGO AR ON DR.id=AR.requisito_id WHERE DR.cinta=${cinta} AND AR.rango_id=${rango} `,
+                        (err,rows, fields)=>{
+                            if(err) res.status(500).send('Error al consultar: RENDIMIENTO')
+                            else res.send(rows);
+                        }
+                    );
+                } else {
+                    res.send([])
+                }
+            }
+        }
+    );
+};
