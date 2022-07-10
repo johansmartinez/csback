@@ -14,7 +14,11 @@ mysqlConnection.connect(function(err){
 });
 
 setInterval(() => {
-    mysqlConnection.ping();
-}, 5000);
+    try {
+        mysqlConnection.ping();
+    } catch (error) {
+        console.log('Error ping')
+    }
+}, 1000);
 
 export {mysqlConnection};

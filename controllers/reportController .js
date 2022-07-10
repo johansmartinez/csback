@@ -8,7 +8,7 @@ export const getReports=(req,res)=>{
             if (err) {
                 res.status(500).send('Ha ocurrido un error al consultar: INFORMES');
             } else {
-                mysqlConnection.query(`SELECT INF.id, INF.descripcion, CONCAT(PE.nombres, ' ', PE.apellidos) AS instructor, RC.requisito, CO.nombre as componente FROM INFORME INF INNER JOIN PERSONA PE ON INF.instructor=PE.documento INNER JOIN REQUISITO_CINTA RC ON INF.requisito=RC.id INNER JOIN COMPONENTE CO ON RC.componente=CO.id WHERE INF.rango IN (SELECT id FROM RANGO WHERE documento='${documento}')`,
+                mysqlConnection.query(`SELECT INF.id, INF.descripcion, CONCAT(PE.nombres, ' ', PE.apellidos) AS instructor, RC.requisito, CO.nombre as componente, CI.nombre AS cinta FROM INFORME INF INNER JOIN PERSONA PE ON INF.instructor=PE.documento INNER JOIN REQUISITO_CINTA RC ON INF.requisito=RC.id INNER JOIN COMPONENTE CO ON RC.componente=CO.id INNER JOIN CINTA CI ON RC.cinta=CI.id WHERE INF.rango IN (SELECT id FROM RANGO WHERE documento='${documento}')`,
                     (err, rows, fields) => {
                         if(err) res.status(500).send('Ha ocurrido un error al consultar: INFORMES')
                         else res.json(rows);

@@ -8,7 +8,7 @@ router.get('/:documento', [isUser] ,getReports);
 
 router.post('/add', [isInstructor],addReport);
 
-router.post('/evaluate', [isInstructor],evaluate);
+router.post('/evaluate', [isInstructor] ,evaluate);
 
 router.get('/performance/:documento',[isUser], performance);
 
