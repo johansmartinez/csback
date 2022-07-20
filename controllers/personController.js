@@ -37,19 +37,46 @@ export const createStudent=(req,res)=>{
 };
 
 export const createInstructor=(req,res)=>{
-    const {documento,eps,contacto,nombres,apellidos,telefono,fecha_nacimiento,correo,contrasena}=req.body;
-    mysqlConnection.query(`INSERT INTO PERSONA (documento,eps,contacto,nombres,apellidos,telefono,fecha_nacimiento,fecha_inscripcion,rol) VALUES ('${documento}',${eps},NULL,'${String(nombres).toUpperCase()}','${String(apellidos).toUpperCase()}','${telefono}','${fecha_nacimiento}','${new Date().toISOString().split('T')[0]}', 'instructor')`,
+    const {documento}=req.body;
+    mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento='${documento}'`,
         async (err, rows, fields) => {
             if(err) {res.status(500).send('Error al registrar: Instructor')}
             else{
-                mysqlConnection.query(`INSERT INTO USUARIOS (documento,correo,contrasena) VALUES ('${documento}','${correo}','${await encrypt(contrasena)}')`,
-                    (err,rows,fields)=>{
-                        if (err) {res.status(500).send('Error al registrar: USUARIO')}
-                        else{
-                            res.status(200).send('Estudiante agregado correctamente')
+                if (rows[0]) {
+                    mysqlConnection.query(`UPDATE PERSONA SET rol='instructor' WHERE documento='${documento}'`,
+                        async (err, rows, fields) => {
+                            if(err) {res.status(500).send('Error al registrar: Instructor')}
+                            else{
+                                res.status(200).send({})
+                            }
                         }
-                    }
-                );
+                    )
+                } else {
+                    res.status(500).send('Error al registrar: Instructor')
+                }
+            }
+        }
+    );
+};
+
+export const createAdmin=(req,res)=>{
+    const {documento}=req.body;
+    mysqlConnection.query(`SELECT * FROM PERSONA WHERE documento='${documento}'`,
+        async (err, rows, fields) => {
+            if(err) {res.status(500).send('Error al registrar: Administrador')}
+            else{
+                if (rows[0]) {
+                    mysqlConnection.query(`UPDATE PERSONA SET rol='admin' WHERE documento='${documento}'`,
+                        async (err, rows, fields) => {
+                            if(err) {res.status(500).send('Error al registrar: Administrador')}
+                            else{
+                                res.status(200).send({})
+                            }
+                        }
+                    )
+                } else {
+                    res.status(500).send('Error al registrar: Instructor')
+                }
             }
         }
     );
