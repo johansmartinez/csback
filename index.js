@@ -25,6 +25,12 @@ app.use('/rank',rank);
 import report from './routes/report';
 app.use('/report', report);
 
+import component from './routes/component';
+app.use('/component', component);
+
+import requirement from './routes/requirement';
+app.use('/requirement',requirement);
+
 app.listen(PORT, ()=>{
     console.log(`Server runnig on PORT: ${PORT}`);
 });
