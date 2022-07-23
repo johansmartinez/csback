@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import {createStudent, createInstructor, createAdmin, getPerson, login, edit} from '../controllers/personController';
-import { isUser, isStudent, isAdmin} from '../auth/auth';
+import {createStudent, createInstructor, createAdmin, getPerson, login, edit, getStudents, getInstructors} from '../controllers/personController';
+import { isUser, isInstructor, isAdmin} from '../auth/auth';
 
 const router= Router();
 
@@ -16,5 +16,8 @@ router.post('/login', login);
 
 router.put('/',[isUser],edit);
 
+router.get('/instructors',[isInstructor], getInstructors);
+
+router.get('/students',[isInstructor], getStudents);
 
 export default router;

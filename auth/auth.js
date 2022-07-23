@@ -66,7 +66,7 @@ async function isInstructor(req,res, callback){
             (err, rows, fields) => {
                 if (err) {res.status(500).send('Ha ocurrido al validar el token')}
                 else{
-                    if(rows[0]?.rol==='instructor'){
+                    if(rows[0]?.rol==='instructor'||rows[0]?.rol==='admin'){
                         callback();
                     }else{
                         res.status(401).send('Usted no está autorizado para realizar está petición');
