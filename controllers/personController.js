@@ -132,7 +132,7 @@ export const login=(req,res)=>{
 };
 
 export const getStudents=(req,res)=>{
-    mysqlConnection.query(`SELECT * FROM PERSONA WHERE rol='estudiante')`,
+    mysqlConnection.query(`SELECT * FROM PERSONA WHERE rol='estudiante'`,
         (err, rows, fields) => {
             if(err) res.status(500).send('Ha ocurrido un error al consultar: ESTUDIANTES');
             else res.json(rows);
@@ -141,7 +141,7 @@ export const getStudents=(req,res)=>{
 };
 
 export const getInstructors=(req,res)=>{
-    mysqlConnection.query(`SELECT * FROM PERSONA WHERE rol='instructor')`,
+    mysqlConnection.query(`SELECT * FROM PERSONA WHERE rol='instructor'`,
         (err, rows, fields) => {
             if(err) res.status(500).send('Ha ocurrido un error al consultar: INSTRUCTORES');
             else res.json(rows);

@@ -16,8 +16,8 @@ router.post('/login', login);
 
 router.put('/',[isUser],edit);
 
-router.get('/instructors',[isAdmin], getInstructors);
+router.get('/instructor/all',[isAdmin], getInstructors);
 
-router.get('/students',[isInstructor], getStudents);
+router.get('/student/all',[isInstructor], getStudents);
 
 export default router;
