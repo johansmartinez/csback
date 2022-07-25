@@ -41,7 +41,7 @@ export const registerAttendance=(req,res)=>{
 
 export const getReport=(req, res)=>{
     const {menor, mayor}= req.params;
-    mysqlConnection.query(`SELECT ASI.alumno AS documento, CONCAT(PE.nombres, CONCAT(' ', PE.apellidos)) AS estudiante, COUNT(ASI.alumno) AS asistencias FROM ASISTENCIA ASI JOIN PERSONA PE ON ASI.alumno=PE.documento WHERE fecha_asistencia > '${menor}' AND fecha_asistencia < '${mayor}' GROUP BY ASI.alumno `,
+    mysqlConnection.query(`SELECT ASI.alumno AS documento, CONCAT(PE.nombres, CONCAT(' ', PE.apellidos)) AS estudiante, COUNT(ASI.alumno) AS asistencias FROM ASISTENCIA ASI JOIN PERSONA PE ON ASI.alumno=PE.documento WHERE fecha_asistencia >= '${menor}' AND fecha_asistencia <= '${mayor}' GROUP BY ASI.alumno `,
         (err,rows, fileds)=>{
             if(err) res.status(500).send('Ha ocurrido un error al consultar: REPORTE DE  ASISTENCIAS');
             else res.json(rows);
