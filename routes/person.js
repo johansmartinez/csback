@@ -10,7 +10,7 @@ router.post('/student', createStudent);
 
 router.post('/instructor',[isAdmin], createInstructor);
 
-router.post('/admin',{isAdmin}, createAdmin);
+router.post('/admin',[isAdmin], createAdmin);
 
 router.post('/login', login);
 
