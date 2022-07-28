@@ -6,11 +6,11 @@ const router= Router();
 
 router.get('/:documento',[isUser], getPerson);
 
-router.post('/student',[isAdmin], createStudent);
+router.post('/student', createStudent);
 
 router.post('/instructor',[isAdmin], createInstructor);
 
-router.post('/admin', createAdmin);
+router.post('/admin',{isAdmin}, createAdmin);
 
 router.post('/login', login);
 
