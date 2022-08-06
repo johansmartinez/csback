@@ -4,7 +4,7 @@ import cors from "cors";
 const app=express();
 const PORT= process.env.PORT || 3002;
 
-app.use((req, res, next) => {
+app.all('/*',(req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
@@ -12,7 +12,7 @@ app.use((req, res, next) => {
     next();
 });
 
-//app.use(cors({origin: '*'}))
+app.use(cors())
 app.use(express.json());
 
 import eps from './routes/eps';
