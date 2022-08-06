@@ -12,7 +12,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(cors({origin: '*'}))
+//app.use(cors({origin: '*'}))
 app.use(express.json());
 
 import eps from './routes/eps';
