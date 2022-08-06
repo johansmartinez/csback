@@ -1,5 +1,6 @@
 #carpeta de configuración
-config
+config/
+
 # Logs
 logs
 *.log
